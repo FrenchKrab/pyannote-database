@@ -26,15 +26,12 @@
 # AUTHORS
 # Hervé BREDIN - http://herve.niderb.fr
 
-import yaml
-from pathlib import Path
 import warnings
 import pandas as pd
 from pyannote.core import Segment, Timeline, Annotation
 from .protocol.protocol import ProtocolFile
 
-from typing import Text
-from typing import Union
+from typing import Optional, Text
 from typing import Dict
 from typing import List
 
@@ -42,7 +39,7 @@ DatabaseName = Text
 PathTemplate = Text
 
 
-def get_unique_identifier(item):
+def get_unique_identifier(item: ProtocolFile) -> str:
     """Return unique item identifier
 
     The complete format is {database}/{uri}_{channel}:
@@ -75,7 +72,7 @@ def get_unique_identifier(item):
 
 
 # This function is used in custom.py
-def get_annotated(current_file):
+def get_annotated(current_file: ProtocolFile) -> Timeline:
     """Get part of the file that is annotated.
 
     Parameters
@@ -123,14 +120,14 @@ def get_annotated(current_file):
     return annotated
 
 
-def get_label_identifier(label, current_file):
+def get_label_identifier(label: str, current_file: ProtocolFile) -> str:
     """Return unique label identifier
 
     Parameters
     ----------
     label : str
         Database-internal label
-    current_file
+    current_file: ProtocolFile
         Yielded by pyannote.database protocols
 
     Returns
@@ -145,7 +142,7 @@ def get_label_identifier(label, current_file):
     return database + "|" + label
 
 
-def load_rttm(file_rttm, keep_type="SPEAKER"):
+def load_rttm(file_rttm: str, keep_type: str = "SPEAKER") -> dict[str, Annotation]:
     """Load RTTM file
 
     Parameter
@@ -196,7 +193,7 @@ def load_rttm(file_rttm, keep_type="SPEAKER"):
     return annotations
 
 
-def load_stm(file_stm):
+def load_stm(file_stm: str) -> dict[str, Annotation]:
     """Load STM file (speaker-info only)
 
     Parameter
@@ -230,7 +227,7 @@ def load_stm(file_stm):
     return annotations
 
 
-def load_mdtm(file_mdtm):
+def load_mdtm(file_mdtm: str) -> dict[str, Annotation]:
     """Load MDTM file
 
     Parameter
@@ -265,7 +262,7 @@ def load_mdtm(file_mdtm):
     return annotations
 
 
-def load_uem(file_uem):
+def load_uem(file_uem: str) -> dict[str, Timeline]:
     """Load UEM file
 
     Parameter
@@ -291,7 +288,7 @@ def load_uem(file_uem):
     return timelines
 
 
-def load_lab(path, uri: str = None) -> Annotation:
+def load_lab(path: str, uri: Optional[str] = None) -> Annotation:
     """Load LAB file
 
     Parameter
@@ -316,7 +313,7 @@ def load_lab(path, uri: str = None) -> Annotation:
     return annotation
 
 
-def load_lst(file_lst):
+def load_lst(file_lst) -> List[str]:
     """Load LST file
 
     LST files provide a list of URIs (one line per URI)
@@ -337,7 +334,7 @@ def load_lst(file_lst):
     return [line.strip() for line in lines]
 
 
-def load_mapping(mapping_txt):
+def load_mapping(mapping_txt) -> Dict[str, str]:
     """Load mapping file
 
     Parameter
@@ -383,11 +380,12 @@ class LabelMapper(object):
 
     """
 
-    def __init__(self, mapping, keep_missing=False):
+    def __init__(self, mapping: dict, keep_missing: bool = False):
         self.mapping = mapping
         self.keep_missing = keep_missing
 
-    def __call__(self, current_file):
+    def __call__(self, current_file: ProtocolFile) -> Annotation:
+
         if not self.keep_missing:
             missing = set(current_file["annotation"].labels()) - set(self.mapping)
             if missing and not self.keep_missing:
