@@ -27,16 +27,12 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 
-from typing import Dict, Optional
-from .protocol import Protocol
-from .protocol import ProtocolFile
-from .protocol import Subset
-from .protocol import Preprocessor
-from .protocol import Preprocessors
-from pyannote.core import Annotation
-from pyannote.core import Timeline
-from pyannote.core import Segment
 import functools
+from typing import Optional
+
+from pyannote.core import Annotation, Segment, Timeline
+
+from .protocol import Preprocessor, Preprocessors, Protocol, ProtocolFile, Subset
 
 
 def crop_annotated(
@@ -129,7 +125,7 @@ class SegmentationProtocol(Protocol):
     least one of `train_iter`, `development_iter` and `test_iter` methods:
 
         >>> class MySegmentationProtocol(SegmentationProtocol):
-        ...     def train_iter(self) -> Iterator[Dict]:
+        ...     def train_iter(self) -> Iterator[dict]:
         ...         yield {"uri": "filename1",
         ...                "annotation": Annotation(...),
         ...                "annotated": Timeline(...)}
@@ -233,7 +229,7 @@ class SegmentationProtocol(Protocol):
 
         super().__init__(preprocessors=preprocessors)
 
-    def stats(self, subset: Subset = "train") -> Dict:
+    def stats(self, subset: Subset = "train") -> dict:
         """Obtain global statistics on a given subset
 
         Parameters

@@ -30,28 +30,20 @@
 """pyannote.database"""
 
 
-from typing import Optional
 import warnings
-
-from .registry import registry, LoadingMode
+from typing import Optional
 
 from .database import Database
-
-from .protocol.protocol import Protocol
-from .protocol.protocol import ProtocolFile
-from .protocol.protocol import Subset
-from .protocol.protocol import Preprocessors
-
 from .file_finder import FileFinder
-from .util import get_annotated
-from .util import get_unique_identifier
-from .util import get_label_identifier
+from .protocol.protocol import Preprocessors, Protocol, ProtocolFile, Subset
+from .registry import LoadingMode, registry
+from .util import get_annotated, get_label_identifier, get_unique_identifier
 
 import importlib.metadata
 __version__ = importlib.metadata.version("pyannote-database")
 
 
-def get_protocol(name, preprocessors: Optional[Preprocessors] = None) -> Protocol:
+def get_protocol(name: str, preprocessors: Optional[Preprocessors] = None) -> Protocol:
     """Get protocol by full name
 
     name : str

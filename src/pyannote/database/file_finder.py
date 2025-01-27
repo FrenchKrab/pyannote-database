@@ -29,10 +29,12 @@
 
 import warnings
 from pathlib import Path
-from typing import Text
+from typing import Optional
+
 from pyannote.database.protocol.protocol import ProtocolFile
-from .registry import registry as global_registry
+
 from .registry import Registry
+from .registry import registry as global_registry
 
 
 class FileFinder:
@@ -46,7 +48,9 @@ class FileFinder:
         Database registry. Defaults to `pyannote.database.registry`.
     """
 
-    def __init__(self, registry: Registry = None, database_yml: Text = None):
+    def __init__(
+        self, registry: Optional[Registry] = None, database_yml: Optional[str] = None
+    ):
         super().__init__()
         if registry is None:
             if database_yml is None:
@@ -82,11 +86,11 @@ class FileFinder:
         database = current_file["database"]
 
         path_templates = self.registry.sources[database]
-        if isinstance(path_templates, Text):
+        if isinstance(path_templates, str):
             path_templates = [path_templates]
 
-        searched = []
-        found = []
+        searched: list[Path] = []
+        found: list[Path] = []
 
         for path_template in path_templates:
             path = Path(path_template.format(uri=uri, database=database))
@@ -118,13 +122,14 @@ class FileFinder:
         if len(found) == 1:
             return found[0]
 
-        if len(found) == 0:
+        elif len(found) == 0:
             msg = f'Could not find file "{uri}" in any of the following location(s):'
             for path in searched:
                 msg += f"\n - {path}"
             raise FileNotFoundError(msg)
 
-        if len(found) > 1:
+        # len(found) > 1
+        else:
             msg = (
                 f'Looked for file "{uri}" and found more than one '
                 f"({len(found)}) matching locations: "

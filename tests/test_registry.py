@@ -29,6 +29,7 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 import warnings
+
 import pytest
 
 from pyannote.database.registry import LoadingMode, _merge_protocols_inplace

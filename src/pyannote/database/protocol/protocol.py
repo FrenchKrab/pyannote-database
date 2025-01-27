@@ -33,11 +33,12 @@ Protocols
 
 """
 
-import warnings
 import collections
-import threading
 import itertools
-from typing import Union, Dict, Iterator, Callable, Any, Text, Optional
+import threading
+import warnings
+from collections.abc import MutableMapping
+from typing import Any, Callable, Iterator, Optional, Union
 
 try:
     from typing import Literal
@@ -49,10 +50,10 @@ LEGACY_SUBSET_MAPPING = {"train": "trn", "development": "dev", "test": "tst"}
 Scope = Literal["file", "database", "global"]
 
 Preprocessor = Callable[["ProtocolFile"], Any]
-Preprocessors = Dict[Text, Preprocessor]
+Preprocessors = dict[str, Preprocessor]
 
 
-class ProtocolFile(collections.abc.MutableMapping):
+class ProtocolFile(MutableMapping):
     """Protocol file with lazy preprocessors
 
     This is a dict-like data structure where some values may depend on other
@@ -70,7 +71,9 @@ class ProtocolFile(collections.abc.MutableMapping):
 
     """
 
-    def __init__(self, precomputed: Union[Dict, "ProtocolFile"], lazy: Dict = None):
+    def __init__(
+        self, precomputed: Union[dict, "ProtocolFile"], lazy: Optional[dict] = None
+    ):
         if lazy is None:
             lazy = dict()
 
@@ -78,7 +81,7 @@ class ProtocolFile(collections.abc.MutableMapping):
             # when 'precomputed' is a ProtocolFile, it may already contain lazy keys.
 
             # we use 'precomputed' precomputed keys as precomputed keys
-            self._store: Dict = abs(precomputed)
+            self._store: dict = abs(precomputed)
 
             # we handle the corner case where the intersection of 'precomputed' lazy keys
             # and 'lazy' keys is not empty. this is currently achieved by "unlazying" the
@@ -89,10 +92,10 @@ class ProtocolFile(collections.abc.MutableMapping):
             # we use the union of 'precomputed' lazy keys and provided 'lazy' keys as lazy keys
             compound_lazy = dict(precomputed.lazy)
             compound_lazy.update(lazy)
-            self.lazy: Dict = compound_lazy
+            self.lazy: dict = compound_lazy
 
         else:
-            # when 'precomputed' is a Dict, we use it directly as precomputed keys
+            # when 'precomputed' is a dict, we use it directly as precomputed keys
             # and 'lazy' as lazy keys.
             self._store = dict(precomputed)
             self.lazy = dict(lazy)
@@ -246,7 +249,7 @@ class Protocol:
     one of `train_iter`, `development_iter` and `test_iter` methods:
 
         >>> class MyProtocol(Protocol):
-        ...     def train_iter(self) -> Iterator[Dict]:
+        ...     def train_iter(self) -> Iterator[dict]:
         ...         yield {"uri": "filename1", "any_other_key": "..."}
         ...         yield {"uri": "filename2", "any_other_key": "..."}
 
@@ -329,21 +332,21 @@ class Protocol:
                 msg = f'"{key}" preprocessor is neither a callable nor a string.'
                 raise ValueError(msg)
 
-    def preprocess(self, current_file: Union[Dict, ProtocolFile]) -> ProtocolFile:
+    def preprocess(self, current_file: Union[dict, ProtocolFile]) -> ProtocolFile:
         return ProtocolFile(current_file, lazy=self.preprocessors)
 
     def __str__(self):
         return self.__doc__
 
-    def train_iter(self) -> Iterator[Union[Dict, ProtocolFile]]:
+    def train_iter(self) -> Iterator[Union[dict, ProtocolFile]]:
         """Iterate over files in the training subset"""
         raise NotImplementedError()
 
-    def development_iter(self) -> Iterator[Union[Dict, ProtocolFile]]:
+    def development_iter(self) -> Iterator[Union[dict, ProtocolFile]]:
         """Iterate over files in the development subset"""
         raise NotImplementedError()
 
-    def test_iter(self) -> Iterator[Union[Dict, ProtocolFile]]:
+    def test_iter(self) -> Iterator[Union[dict, ProtocolFile]]:
         """Iterate over files in the test subset"""
         raise NotImplementedError()
 

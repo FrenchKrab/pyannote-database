@@ -28,15 +28,14 @@
 # Alexis PLAQUET
 
 
-import typer
-from enum import Enum
 import math
-from typing import Text
-from pyannote.database import Database
-from pyannote.database import registry
-from pyannote.database.protocol import CollectionProtocol
-from pyannote.database.protocol import SpeakerDiarizationProtocol
+from enum import Enum
+
+import typer
 from pyannote.core import Annotation
+
+from pyannote.database import Database, registry
+from pyannote.database.protocol import CollectionProtocol, SpeakerDiarizationProtocol
 
 app = typer.Typer()
 
@@ -116,7 +115,7 @@ def protocol(
                 typer.echo(f"{database_name}.{task_name}.{protocol}")
 
 
-def duration_to_str(seconds: float) -> Text:
+def duration_to_str(seconds: float) -> str:
     hours = math.floor(seconds / 3600)
     minutes = math.floor((seconds - 3600 * hours) / 60)
     return f"{hours}h{minutes:02d}m"

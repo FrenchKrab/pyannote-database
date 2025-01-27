@@ -28,16 +28,18 @@
 # Hervé BREDIN - http://herve.niderb.fr
 # Alexis PLAQUET
 
-from enum import Enum
 import os
-from pathlib import Path
-from typing import Dict, List, Set, Optional, Text, Tuple, Type, Union
 import warnings
+from enum import Enum
+from pathlib import Path
+from typing import Optional, Set, Tuple, Type, Union
+
+import yaml
 
 from pyannote.database.protocol.protocol import Preprocessors, Protocol
+
 from .custom import create_protocol, get_init
 from .database import Database
-import yaml
 
 
 # controls what to do in case of protocol name conflict
@@ -143,7 +145,7 @@ class Registry:
         #           }
         #       }
         #   }
-        self.configs: Dict[Path, Dict] = dict()
+        self.configs: dict[Path, dict] = dict()
 
         # Content of the "Database" root item (= where to find file content)
         # Example after loading both database.yml:
@@ -156,7 +158,7 @@ class Registry:
         #   "DatabaseB": ["/absolute/path/B/{uri}.wav"],
         #   "DatabaseC": ["/absolute/path/C/{uri}.wav"]
         #   }
-        self.sources: Dict[Text, List[Text]] = dict()
+        self.sources: dict[str, list[str]] = dict()
 
         # Mapping of database names to a type that inherits from Database
         # Example after loading both database.yml:
@@ -164,11 +166,11 @@ class Registry:
         #    "DatabaseB": pyannote.database.registry.DatabaseB,
         #    "DatabaseC": pyannote.database.registry.DatabaseC,
         #    "X": pyannote.database.registry.X}
-        self.databases: Dict[Text, Type] = dict()
+        self.databases: dict[str, Type] = dict()
 
     def load_database(
         self,
-        path: Union[Text, Path],
+        path: Union[str, Path],
         mode: LoadingMode = LoadingMode.OVERRIDE,
     ):
         """Load YAML configuration file into the registry
@@ -192,7 +194,7 @@ class Registry:
 
     def _load_database_helper(
         self,
-        database_yml: Union[Text, Path],
+        database_yml: Union[str, Path],
         mode: LoadingMode = LoadingMode.KEEP,
         loading: Set[Path] = set(),
     ):
@@ -200,7 +202,7 @@ class Registry:
 
         Parameters
         ----------
-        database_yml : Union[Text, Path]
+        database_yml : Union[str, Path]
             Path to the database.yml
         mode : LoadingMode, optional
             Controls how to handle conflicts in protocol names.
@@ -252,7 +254,7 @@ class Registry:
             if not isinstance(value, list):
                 value = [value]
 
-            path_list: List[str] = list()
+            path_list: list[str] = list()
             for p in value:
                 path = Path(p)
                 if not path.is_absolute():
@@ -263,7 +265,7 @@ class Registry:
         # save configuration for later reloading of meta-protocols
         self.configs[database_yml] = config
 
-    def get_database(self, database_name, **kwargs) -> Database:
+    def get_database(self, database_name: str, **kwargs) -> Database:
         """Get database by name
 
         Parameters
@@ -299,7 +301,7 @@ class Registry:
         return database(**kwargs)
 
     def get_protocol(
-        self, name, preprocessors: Optional[Preprocessors] = None
+        self, name: str, preprocessors: Optional[Preprocessors] = None
     ) -> Protocol:
         """Get protocol by full name
 
@@ -337,9 +339,9 @@ class Registry:
 
     def _load_protocols(
         self,
-        db_name,
+        db_name: str,
         db_entries: dict,
-        database_yml: Union[Text, Path] = None,
+        database_yml: Optional[Union[str, Path]] = None,
         mode: LoadingMode = LoadingMode.OVERRIDE,
     ):
         """Load all protocols from this database into the registry.
@@ -350,14 +352,14 @@ class Registry:
             Name of the database
         db_entries : dict
             Dict of all entries under this database (this should be tasks)
-        database_yml : Union[Text, Path], optional
+        database_yml : Union[str, Path], optional
             Path to the database.yml file. Not required for X protocols, by default None
         """
 
         db_name = str(db_name)
 
         # maps tuple (task,protocol) to the custom protocol class
-        protocols: Dict[Tuple[Text, Text], Type] = dict()
+        protocols: dict[Tuple[str, str], Type] = dict()
 
         for task_name, task_entries in db_entries.items():
             for protocol, protocol_entries in task_entries.items():
@@ -402,7 +404,7 @@ class Registry:
                 )
 
 
-def _env_config_paths() -> List[Path]:
+def _env_config_paths() -> list[Path]:
     """Parse PYANNOTE_DATABASE_CONFIG environment variable
 
     PYANNOTE_DATABASE_CONFIG may contain multiple paths separation by ";".
@@ -423,7 +425,7 @@ def _env_config_paths() -> List[Path]:
     return paths
 
 
-def _find_default_ymls() -> List[Path]:
+def _find_default_ymls() -> list[Path]:
     """Get paths to default YAML configuration files
 
     * $HOME/.pyannote/database.yml
@@ -436,7 +438,7 @@ def _find_default_ymls() -> List[Path]:
         List of existing default YAML configuration files
     """
 
-    paths: List[Path] = []
+    paths: list[Path] = []
 
     home_db_yml = Path("~/.pyannote/database.yml").expanduser()
     if home_db_yml.is_file():
@@ -452,8 +454,8 @@ def _find_default_ymls() -> List[Path]:
 
 
 def _merge_protocols_inplace(
-    new_protocols: Dict[Tuple[Text, Text], Type],
-    old_protocols: Dict[Tuple[Text, Text], Type],
+    new_protocols: dict[Tuple[str, str], Type],
+    old_protocols: dict[Tuple[str, str], Type],
     mode: LoadingMode,
     db_name: str,
     database_yml: str,
@@ -467,10 +469,10 @@ def _merge_protocols_inplace(
 
     Parameters
     ----------
-    new_protocols : Dict[Tuple[Text, Text], Type]
+    new_protocols : dict[Tuple[str, str], Type]
         New protocol dict
         Maps (task,protocol) tuples to custom protocol classes
-    old_protocols : Dict[Tuple[Text, Text], Type]
+    old_protocols : dict[Tuple[str, str], Type]
         Old protocols dict
         Maps (task,protocol) tuples to custom protocol classes.
     mode : LoadingMode
