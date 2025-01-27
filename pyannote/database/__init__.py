@@ -71,8 +71,9 @@ def get_protocol(name, preprocessors: Optional[Preprocessors] = None) -> Protoco
         Protocol instance
     """
     warnings.warn(
-        "`get_protocol` has been deprecated in favor of `pyannote.database.registry.get_protocol`.", 
-        DeprecationWarning)
+        "`get_protocol` has been deprecated in favor of `pyannote.database.registry.get_protocol`.",
+        DeprecationWarning,
+    )
     return registry.get_protocol(name, preprocessors=preprocessors)
 
 

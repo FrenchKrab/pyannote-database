@@ -71,7 +71,6 @@ class ProtocolFile(collections.abc.MutableMapping):
     """
 
     def __init__(self, precomputed: Union[Dict, "ProtocolFile"], lazy: Dict = None):
-
         if lazy is None:
             lazy = dict()
 
@@ -124,9 +123,7 @@ class ProtocolFile(collections.abc.MutableMapping):
 
     def __getitem__(self, key):
         with self.lock_:
-
             if key in self.lazy and self.evaluating_[key] == 0:
-
                 # mark lazy key as being evaluated
                 self.evaluating_.update([key])
 
@@ -150,7 +147,6 @@ class ProtocolFile(collections.abc.MutableMapping):
 
     def __setitem__(self, key, value):
         with self.lock_:
-
             if key in self.lazy:
                 del self.lazy[key]
 
@@ -158,7 +154,6 @@ class ProtocolFile(collections.abc.MutableMapping):
 
     def __delitem__(self, key):
         with self.lock_:
-
             if key in self.lazy:
                 del self.lazy[key]
 
@@ -166,7 +161,6 @@ class ProtocolFile(collections.abc.MutableMapping):
 
     def __iter__(self):
         with self.lock_:
-
             store_keys = list(self._store)
             for key in store_keys:
                 yield key
@@ -220,7 +214,6 @@ class ProtocolFile(collections.abc.MutableMapping):
 
         precomputed = {"uri": uris}
         for key, value in abs(self).items():
-
             if key == "uri":
                 continue
 
@@ -319,7 +312,6 @@ class Protocol:
 
         self.preprocessors = dict()
         for key, preprocessor in preprocessors.items():
-
             if callable(preprocessor):
                 self.preprocessors[key] = preprocessor
 
@@ -356,7 +348,6 @@ class Protocol:
         raise NotImplementedError()
 
     def subset_helper(self, subset: Subset) -> Iterator[ProtocolFile]:
-
         try:
             files = getattr(self, f"{subset}_iter")()
         except (AttributeError, NotImplementedError):
@@ -402,7 +393,6 @@ class Protocol:
             "train_enrolment",
             "train_trial",
         ]:
-
             if not hasattr(self, method):
                 continue
 
@@ -414,7 +404,6 @@ class Protocol:
                     return
 
             for current_file in iterate():
-
                 # skip "files" that do not contain a "uri" entry.
                 # this happens for speaker verification trials that contain
                 # two nested files "file1" and "file2"
@@ -423,7 +412,6 @@ class Protocol:
                     continue
 
                 for current_file_ in current_file.files():
-
                     # corner case when the same file is yielded several times
                     uri = get_unique_identifier(current_file_)
                     if uri in yielded_uris:

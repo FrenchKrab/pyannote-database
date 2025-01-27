@@ -36,8 +36,8 @@ from .registry import Registry
 
 
 class FileFinder:
-    """Database file finder. 
-    
+    """Database file finder.
+
     Retrieve media files by URI.
 
     Parameters
@@ -46,16 +46,15 @@ class FileFinder:
         Database registry. Defaults to `pyannote.database.registry`.
     """
 
-    def __init__(
-        self, 
-        registry: Registry = None,
-        database_yml: Text = None):
+    def __init__(self, registry: Registry = None, database_yml: Text = None):
         super().__init__()
         if registry is None:
             if database_yml is None:
                 registry = global_registry
             else:
-                warnings.warn("Passing `database.yml` to `FileFinder` is deprecated in favor of `registry`.")
+                warnings.warn(
+                    "Passing `database.yml` to `FileFinder` is deprecated in favor of `registry`."
+                )
                 registry = Registry()
                 registry.load_database(database_yml)
         self.registry = registry

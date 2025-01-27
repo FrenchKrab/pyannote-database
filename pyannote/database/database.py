@@ -40,7 +40,6 @@ class Database:
     """
 
     def __init__(self, preprocessors=None):
-
         if preprocessors is not None:
             database_name = self.__class__.__name__
             msg = (

@@ -89,9 +89,7 @@ def load_trial(file_trial):
         List of trial
     """
 
-    trials = pd.read_table(
-        file_trial, sep="\s+", names=["reference", "uri1", "uri2"]
-    )
+    trials = pd.read_table(file_trial, sep="\s+", names=["reference", "uri1", "uri2"])
 
     for _, reference, uri1, uri2 in trials.itertuples():
         yield {"reference": reference, "uri1": uri1, "uri2": uri2}
@@ -119,7 +117,6 @@ class RTTMLoader:
         self.loaded_ = dict() if self.placeholders_ else load_rttm(self.path)
 
     def __call__(self, file: ProtocolFile) -> Annotation:
-
         uri = file["uri"]
 
         if uri in self.loaded_:
@@ -164,7 +161,6 @@ class STMLoader:
         self.loaded_ = dict() if self.placeholders_ else load_stm(self.path)
 
     def __call__(self, file: ProtocolFile) -> Annotation:
-
         uri = file["uri"]
 
         if uri in self.loaded_:
@@ -209,7 +205,6 @@ class UEMLoader:
         self.loaded_ = dict() if self.placeholders_ else load_uem(self.path)
 
     def __call__(self, file: ProtocolFile) -> Timeline:
-
         uri = file["uri"]
 
         if uri in self.loaded_:
@@ -261,7 +256,6 @@ class LABLoader:
             raise ValueError("`path` must contain the {uri} placeholder.")
 
     def __call__(self, file: ProtocolFile) -> Annotation:
-
         uri = file["uri"]
 
         sub_file = {key: file[key] for key in self.placeholders_}
@@ -288,12 +282,11 @@ class CTMLoader:
             "word": str,
             "confidence": float,
         }
-        self.data_ = pd.read_csv(
-            ctm, names=names, dtype=dtype, sep="\s+"
-        ).groupby("uri")
+        self.data_ = pd.read_csv(ctm, names=names, dtype=dtype, sep="\s+").groupby(
+            "uri"
+        )
 
     def __call__(self, current_file: ProtocolFile) -> Union["Doc", None]:
-
         try:
             from spacy.vocab import Vocab
             from spacy.tokens import Doc
@@ -353,9 +346,7 @@ class MAPLoader:
         dtype = {
             "uri": str,
         }
-        self.data_ = pd.read_csv(
-            mapping, names=names, dtype=dtype, sep="\s+"
-        )
+        self.data_ = pd.read_csv(mapping, names=names, dtype=dtype, sep="\s+")
 
         # get colum 'value' dtype, allowing us to acces it during subset
         self.dtype = self.data_.dtypes["value"]

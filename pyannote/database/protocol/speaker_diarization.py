@@ -28,6 +28,7 @@
 
 from .segmentation import SegmentationProtocol
 
+
 class SpeakerDiarizationProtocol(SegmentationProtocol):
     """A protocol for speaker diarization experiments
 
