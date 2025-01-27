@@ -83,7 +83,7 @@ def Template(template: Text, database_yml: Path) -> Callable[[ProtocolFile], Any
         Extension (here ".csv") determined which data loader to use.
     database_yml : Path
         Path to YAML configuration file, to which `template` is relative.
-        Defaults to assume that `template` is absolute or relative to 
+        Defaults to assume that `template` is absolute or relative to
         current working directory.
 
     Returns
@@ -120,6 +120,7 @@ def Template(template: Text, database_yml: Path) -> Callable[[ProtocolFile], Any
 def NumericValue(value):
     def load(current_file: ProtocolFile):
         return value
+
     return load
 
 
@@ -129,10 +130,10 @@ def resolve_path(path: Path, database_yml: Path) -> Path:
     Parameters
     ----------
     path : `Path`
-        Path. Can be either absolute, relative to current working directory, 
+        Path. Can be either absolute, relative to current working directory,
         or relative to `database_yml` parent directory.
     database_yml : `Path`
-        Path to YAML configuration file. 
+        Path to YAML configuration file.
 
     Returns
     -------
@@ -215,7 +216,6 @@ def gather_loaders(
     lazy_loader = dict()
 
     for key, value in entries.items():
-
         if key == "uri" or key == "trial":
             continue
 
@@ -228,7 +228,6 @@ def gather_loaders(
         is_template = len(set(placeholders) - set([None])) > 0
 
         if is_template:
-
             # make sure old database.yml specifications still work but warn the user
             # that they can now get rid of this "_" prefix
             if value.startswith("_"):
@@ -243,7 +242,6 @@ def gather_loaders(
             lazy_loader[key] = Template(value, database_yml)
 
         else:
-
             path = resolve_path(Path(value), database_yml)
 
             # check if file exists
@@ -323,8 +321,10 @@ def subset_iter(
 
     for uri in uris:
         yield ProtocolFile(
-            {"uri": uri, "database": database, "subset": subset, **metadata}, lazy=lazy_loader
+            {"uri": uri, "database": database, "subset": subset, **metadata},
+            lazy=lazy_loader,
         )
+
 
 def subset_trial(
     self,
@@ -420,7 +420,6 @@ def create_protocol(
 
     """
 
-    
     try:
         base_class = getattr(
             protocol_module, "Protocol" if task == "Protocol" else f"{task}Protocol"
@@ -460,7 +459,7 @@ def create_protocol(
             msg = (
                 f"'{database}.{task}.{protocol}' found in {database_yml} does not define "
                 f"the 'scope' of speaker labels (file, database, or global). Setting it to 'file'."
-            )   
+            )
             print(msg)
             metadata["scope"] = "file"
 
@@ -469,7 +468,6 @@ def create_protocol(
 
     methods = dict()
     for subset, subset_entries in protocol_entries.items():
-
         if subset not in [
             "files",
             "train",
@@ -498,7 +496,6 @@ def create_protocol(
                 database_yml,
             )
         else:
-
             methods[method_name] = functools.partialmethod(
                 subset_iter,
                 database=database,

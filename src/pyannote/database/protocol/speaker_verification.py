@@ -135,7 +135,6 @@ class SpeakerVerificationProtocol(SpeakerDiarizationProtocol):
     """
 
     def subset_trial_helper(self, subset: Subset) -> Iterator[Dict]:
-
         try:
             trials = getattr(self, f"{subset}_trial_iter")()
         except (AttributeError, NotImplementedError):

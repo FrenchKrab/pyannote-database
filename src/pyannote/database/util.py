@@ -385,7 +385,6 @@ class LabelMapper(object):
         self.keep_missing = keep_missing
 
     def __call__(self, current_file: ProtocolFile) -> Annotation:
-
         if not self.keep_missing:
             missing = set(current_file["annotation"].labels()) - set(self.mapping)
             if missing and not self.keep_missing:

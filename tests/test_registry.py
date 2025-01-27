@@ -33,6 +33,7 @@ import pytest
 
 from pyannote.database.registry import LoadingMode, _merge_protocols_inplace
 
+
 def test_override_merging_disjoint():
     protocols1 = {
         ("Task1", "Protocol1"): None,
@@ -45,15 +46,21 @@ def test_override_merging_disjoint():
         warnings.simplefilter("error")  # expect no warning
         _merge_protocols_inplace(protocols1, protocols2, LoadingMode.KEEP, "", "")
 
-    assert ("Task1", "Protocol1",) in protocols1
-    assert ("OtherTask", "Protocol1",) in protocols1
+    assert (
+        "Task1",
+        "Protocol1",
+    ) in protocols1
+    assert (
+        "OtherTask",
+        "Protocol1",
+    ) in protocols1
     assert len(protocols1) == 2
 
-def test_override_merging_identical():
 
+def test_override_merging_identical():
     protocols2 = {
         ("Task1", "Protocol1"): None,
-    }   # the "old" protocols dict. KEEP override options will keep these entries.
+    }  # the "old" protocols dict. KEEP override options will keep these entries.
 
     # Expect warning and protocols1 to become protocols2 (keep old value)
     protocols1 = {
@@ -64,7 +71,7 @@ def test_override_merging_identical():
         assert ("Task1", "Protocol1") in protocols1
         assert protocols1[("Task1", "Protocol1")] == None
         assert len(protocols1) == 1
-    
+
     # Expect warning and protocols1 to keep its value (use new value)
     protocols1 = {
         ("Task1", "Protocol1"): 42,
@@ -74,4 +81,3 @@ def test_override_merging_identical():
         assert ("Task1", "Protocol1") in protocols1
         assert protocols1[("Task1", "Protocol1")] == 42
         assert len(protocols1) == 1
-    

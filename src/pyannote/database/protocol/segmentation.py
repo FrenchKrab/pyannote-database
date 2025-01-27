@@ -216,7 +216,6 @@ class SegmentationProtocol(Protocol):
     """
 
     def __init__(self, preprocessors: Optional[Preprocessors] = None):
-
         if preprocessors is None:
             preprocessors = dict()
 
@@ -263,7 +262,6 @@ class SegmentationProtocol(Protocol):
         labels = {}
 
         for item in getattr(self, subset)():
-
             annotated = get_annotated(item)
             annotated_duration += annotated.duration()
 

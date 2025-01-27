@@ -90,7 +90,11 @@ def protocol(
         case_sensitive=False,
     ),
     task: Task = typer.Option(
-        "Any", "--task", "-t", help="Filter protocols by TASK.", case_sensitive=False,
+        "Any",
+        "--task",
+        "-t",
+        help="Filter protocols by TASK.",
+        case_sensitive=False,
     ),
 ):
     """Print list of protocols"""
@@ -137,7 +141,6 @@ def info(protocol: str):
         typer.Exit(code=1)
 
     for subset in subsets:
-
         num_files = 0
         speakers = set()
         duration = 0.0
