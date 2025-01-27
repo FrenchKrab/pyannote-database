@@ -26,8 +26,9 @@
 # AUTHORS
 # Hervé BREDIN - http://herve.niderb.fr
 
+from setuptools import find_packages, setup
+
 import versioneer
-from setuptools import setup, find_packages
 
 setup(
     # package

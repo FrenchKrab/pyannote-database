@@ -27,16 +27,12 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 import warnings
+from typing import Optional
+
 import pandas as pd
-from pyannote.core import Segment, Timeline, Annotation
+from pyannote.core import Annotation, Segment, Timeline
+
 from .protocol.protocol import ProtocolFile
-
-from typing import Optional, Text
-from typing import Dict
-from typing import List
-
-DatabaseName = Text
-PathTemplate = Text
 
 
 def get_unique_identifier(item: ProtocolFile) -> str:
@@ -313,7 +309,7 @@ def load_lab(path: str, uri: Optional[str] = None) -> Annotation:
     return annotation
 
 
-def load_lst(file_lst) -> List[str]:
+def load_lst(file_lst: str) -> list[str]:
     """Load LST file
 
     LST files provide a list of URIs (one line per URI)
@@ -334,7 +330,7 @@ def load_lst(file_lst) -> List[str]:
     return [line.strip() for line in lines]
 
 
-def load_mapping(mapping_txt) -> Dict[str, str]:
+def load_mapping(mapping_txt: str) -> dict[str, str]:
     """Load mapping file
 
     Parameter

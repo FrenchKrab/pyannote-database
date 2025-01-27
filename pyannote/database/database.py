@@ -27,9 +27,10 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 
-from typing import Optional
-from .protocol.protocol import Preprocessors
 import warnings
+from typing import Optional
+
+from .protocol.protocol import Preprocessors
 
 
 class Database:

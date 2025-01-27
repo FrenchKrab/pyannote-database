@@ -28,10 +28,12 @@
 
 
 from pyannote.database import registry
-from pyannote.database.protocol import CollectionProtocol
-from pyannote.database.protocol import Protocol
-from pyannote.database.protocol import SpeakerDiarizationProtocol
-from pyannote.database.protocol import SpeakerVerificationProtocol
+from pyannote.database.protocol import (
+    CollectionProtocol,
+    Protocol,
+    SpeakerDiarizationProtocol,
+    SpeakerVerificationProtocol,
+)
 
 assert "MyDatabase" in registry.databases
 

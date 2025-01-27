@@ -27,10 +27,10 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 
-from typing import Dict, Iterator
+from typing import Iterator
+
+from .protocol import LEGACY_SUBSET_MAPPING, Subset
 from .speaker_diarization import SpeakerDiarizationProtocol
-from .protocol import Subset
-from .protocol import LEGACY_SUBSET_MAPPING
 
 
 class SpeakerVerificationProtocol(SpeakerDiarizationProtocol):
@@ -42,7 +42,7 @@ class SpeakerVerificationProtocol(SpeakerDiarizationProtocol):
     `test_trial_iter` methods:
 
         >>> class MySpeakerVerificationProtocol(SpeakerVerificationProtocol):
-        ...     def train_trial_iter(self) -> Iterator[Dict]:
+        ...     def train_trial_iter(self) -> Iterator[dict]:
         ...         yield {"reference": 0,
         ...                "file1": {
         ...                     "uri":"filename1",
@@ -134,7 +134,7 @@ class SpeakerVerificationProtocol(SpeakerDiarizationProtocol):
     As such, they also define regular `{subset}` methods.
     """
 
-    def subset_trial_helper(self, subset: Subset) -> Iterator[Dict]:
+    def subset_trial_helper(self, subset: Subset) -> Iterator[dict]:
         try:
             trials = getattr(self, f"{subset}_trial_iter")()
         except (AttributeError, NotImplementedError):
@@ -155,23 +155,23 @@ class SpeakerVerificationProtocol(SpeakerDiarizationProtocol):
             trial["file2"] = self.preprocess(trial["file2"])
             yield trial
 
-    def train_trial_iter(self) -> Iterator[Dict]:
+    def train_trial_iter(self) -> Iterator[dict]:
         """Iterate over trials in the train subset"""
         raise NotImplementedError()
 
-    def development_trial_iter(self) -> Iterator[Dict]:
+    def development_trial_iter(self) -> Iterator[dict]:
         """Iterate over trials in the development subset"""
         raise NotImplementedError()
 
-    def test_trial_iter(self) -> Iterator[Dict]:
+    def test_trial_iter(self) -> Iterator[dict]:
         """Iterate over trials in the test subset"""
         raise NotImplementedError()
 
-    def train_trial(self) -> Iterator[Dict]:
+    def train_trial(self) -> Iterator[dict]:
         return self.subset_trial_helper("train")
 
-    def development_trial(self) -> Iterator[Dict]:
+    def development_trial(self) -> Iterator[dict]:
         return self.subset_trial_helper("development")
 
-    def test_trial(self) -> Iterator[Dict]:
+    def test_trial(self) -> Iterator[dict]:
         return self.subset_trial_helper("test")

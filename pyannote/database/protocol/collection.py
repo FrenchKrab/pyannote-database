@@ -27,7 +27,8 @@
 # Hervé BREDIN - http://herve.niderb.fr
 
 
-from typing import Iterator, Dict
+from typing import Iterator
+
 from .protocol import Protocol
 
 
@@ -38,7 +39,7 @@ class CollectionProtocol(Protocol):
     inherits from CollectionProtocol and implements the `files_iter` method:
 
         >>> class MyCollection(CollectionProtocol):
-        ...     def files_iter(self) -> Iterator[Dict]:
+        ...     def files_iter(self) -> Iterator[dict]:
         ...         yield {"uri": "filename1", "any_other_key": "..."}
         ...         yield {"uri": "filename2", "any_other_key": "..."}
         ...         yield {"uri": "filename3", "any_other_key": "..."}
@@ -90,9 +91,9 @@ class CollectionProtocol(Protocol):
     """
 
     # this method should be overriden
-    def files_iter(self) -> Iterator[Dict]:
+    def files_iter(self) -> Iterator[dict]:
         raise NotImplementedError()
 
     # this allows Protocol.files() to iterate over the collection
-    def train_iter(self) -> Iterator[Dict]:
+    def train_iter(self) -> Iterator[dict]:
         return self.files_iter()

@@ -42,29 +42,22 @@ Protocols:
           annotated: xxx.uem
 """
 
-from pathlib import Path
+import functools
 import string
-
-
-from . import protocol as protocol_module
+import warnings
+from importlib.metadata import entry_points
+from numbers import Number
+from pathlib import Path
+from typing import Any, Callable, Union
 
 from pyannote.database.protocol.protocol import ProtocolFile
 
-
-import warnings
-from numbers import Number
-from typing import Text, Dict, Callable, Any, Union
-import functools
-
+from . import protocol as protocol_module
+from .loader import load_lst, load_trial
 from .protocol.protocol import Subset
 from .protocol.segmentation import SegmentationProtocol
 from .protocol.speaker_diarization import SpeakerDiarizationProtocol
-
-from importlib.metadata import entry_points
-
 from .util import get_annotated
-
-from .loader import load_lst, load_trial
 
 # All "Loader" classes types (eg RTTMLoader, UEMLoader, ...) retrieved from the entry point.
 try:
@@ -75,7 +68,7 @@ except TypeError:
     LOADERS = {ep.name: ep for ep in entry_points().get("pyannote.database.loader", [])}
 
 
-def Template(template: Text, database_yml: Path) -> Callable[[ProtocolFile], Any]:
+def Template(template: str, database_yml: Path) -> Callable[[ProtocolFile], Any]:
     """Get data loader based on template
 
     Parameters
@@ -158,11 +151,11 @@ def resolve_path(path: Path, database_yml: Path) -> Path:
 
 
 def meta_subset_iter(
-    meta_database: Text,
-    meta_task: Text,
-    meta_protocol: Text,
+    meta_database: str,
+    meta_task: str,
+    meta_protocol: str,
     meta_subset: Subset,
-    subset_entries: Dict,
+    subset_entries: dict,
     database_yml: Path,
 ):
     """Meta-protocol method that iterates over a subset
@@ -196,14 +189,14 @@ def meta_subset_iter(
 
 
 def gather_loaders(
-    entries: Dict,
+    entries: dict,
     database_yml: Path,
 ) -> dict:
     """Loads all Loaders for data type specified in 'entries' into a dict.
 
     Parameters
     ----------
-    entries : Dict, optional
+    entries : dict, optional
         Subset entries (eg 'uri', 'annotated', 'annotation', ...)
     database_yml : Path, optional
         Path to the 'database.yml' file
@@ -273,11 +266,11 @@ def gather_loaders(
 
 def subset_iter(
     self,
-    database: Text = None,
-    task: Text = None,
-    protocol: Text = None,
+    database: str = None,
+    task: str = None,
+    protocol: str = None,
     subset: Subset = None,
-    entries: Dict = None,
+    entries: dict = None,
     database_yml: Path = None,
     **metadata,
 ):
@@ -330,11 +323,11 @@ def subset_iter(
 
 def subset_trial(
     self,
-    database: Text = None,
-    task: Text = None,
-    protocol: Text = None,
+    database: str = None,
+    task: str = None,
+    protocol: str = None,
     subset: Subset = None,
-    entries: Dict = None,
+    entries: dict = None,
     database_yml: Path = None,
 ):
     """
@@ -359,7 +352,7 @@ def subset_trial(
     lazy_loader["try_with"] = get_annotated
 
     # meant to store and cache one `ProtocolFile` instance per file
-    files: Dict[Text, ProtocolFile] = dict()
+    files: dict[str, ProtocolFile] = dict()
 
     # iterate trials and use preloaded test files
     for trial in load_trial(resolve_path(Path(entries["trial"]), database_yml)):
@@ -396,15 +389,15 @@ def get_init(protocols):
     return init
 
 
-def get_custom_protocol_class_name(database: Text, task: Text, protocol: Text):
+def get_custom_protocol_class_name(database: str, task: str, protocol: str):
     return f"{database}__{task}__{protocol}"
 
 
 def create_protocol(
-    database: Text,
-    task: Text,
-    protocol: Text,
-    protocol_entries: Dict,
+    database: str,
+    task: str,
+    protocol: str,
+    protocol_entries: dict,
     database_yml: Path,
 ) -> Union[type, None]:
     """Create new protocol class
