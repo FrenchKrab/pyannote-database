@@ -60,10 +60,7 @@ from .protocol.speaker_diarization import SpeakerDiarizationProtocol
 from .util import get_annotated
 
 # All "Loader" classes types (eg RTTMLoader, UEMLoader, ...) retrieved from the entry point.
-LOADERS = {
-    ep.name: ep
-    for ep in entry_points(group="pyannote.database.loader")
-}
+LOADERS = {ep.name: ep for ep in entry_points(group="pyannote.database.loader")}
 
 
 def Template(template: str, database_yml: Path) -> Callable[[ProtocolFile], Any]:

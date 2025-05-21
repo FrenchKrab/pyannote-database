@@ -33,15 +33,16 @@ sys.path.insert(0, os.path.abspath("../.."))
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
-    'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    ]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx.ext.coverage",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+]
 
 
 # Napoleon settings
@@ -65,7 +66,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = {'.rst': 'restructuredtext'}
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -188,6 +189,6 @@ texinfo_documents = [
 ]
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/', None),
-    'pyannote.core': ('https://pyannote.github.io/pyannote-core', None),
+    "python": ("https://docs.python.org/", None),
+    "pyannote.core": ("https://pyannote.github.io/pyannote-core", None),
 }

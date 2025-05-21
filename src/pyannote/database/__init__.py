@@ -30,6 +30,7 @@
 """pyannote.database"""
 
 
+import importlib.metadata
 import warnings
 from typing import Optional
 
@@ -39,7 +40,6 @@ from .protocol.protocol import Preprocessors, Protocol, ProtocolFile, Subset
 from .registry import LoadingMode, registry
 from .util import get_annotated, get_label_identifier, get_unique_identifier
 
-import importlib.metadata
 __version__ = importlib.metadata.version("pyannote-database")
 
 
